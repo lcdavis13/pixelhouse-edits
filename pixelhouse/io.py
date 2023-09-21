@@ -10,18 +10,27 @@ import imageio
 import tempfile
 import os
 import numpy as np
+import cv2
 
 
 def canvas2gif(
-    A, f_gif, palettesize=256, gifsicle=False, duration=None
+    A, f_gif, palettesize=256, gifsicle=False, duration=None, dispose_alpha=False
 ):  # pragma: no cover
     images = [A.render(n).img for n in tqdm(range(len(A)))]
 
-    # for i,img in enumerate(images):
-    #     if img.shape[2] == 4:
-    #         img[:, :, 3] = 255
-    #         images[i] = img
-            
+    if dispose_alpha and np.shape(images)[3] == 4:
+        # This works for still images, but fails in the final gif
+        images = [img[..., :3] for img in images]
+        
+        # This works but technically doesn't get rid of the A channel
+        # for i in range(len(images)):
+        #     images[i][:, :, 3] = 255
+
+    # testing: show images
+    dst = cv2.cvtColor(images[4], cv2.COLOR_RGB2BGR)
+    cv2.imshow("test", dst)
+    cv2.waitKey()
+    
     if duration == None:
         duration = A.duration / A.fps
 
@@ -30,9 +39,11 @@ def canvas2gif(
         images,
         duration=duration,
         palettesize=palettesize,
-        subrectangles=True,
+        subrectangles=False,
         loop=0,
         disposal=2,
+        mode="RGB",
+        transparency=True,
     )
 
     fs = os.stat(f_gif).st_size
