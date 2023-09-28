@@ -4,9 +4,12 @@ import pixelhouse as ph
 
 
 canvas_args = {"width": 300, "height": 300, "extent": 4}
+delay = 1000
+delta_t = 0.1
 
+def simple_circles(time=0.0): # same as small_demos.py but with time argument
+    C = ph.Canvas(**canvas_args)
 
-def simple_circles(C, time=0.0):
     n = 3
     t = np.arange(0, 2 * np.pi, 2 * np.pi / n) + np.pi / 6 + time
     x, y = np.cos(t), np.sin(t)
@@ -18,27 +21,27 @@ def simple_circles(C, time=0.0):
     # An example of not saturating the images together
     C += ph.circle(0, 0, 0.50, color=[155, 155, 155])
 
-    #return C
+    return C
 
 
 if __name__ == "__main__":
-    img = ph.Canvas(**canvas_args)
 
-    simple_circles(img, time=0.0)
-    img.show(delay=-1)
+    t = 0.0
+    unbroken = True
+    while unbroken:
+        img = simple_circles(time=t)
+        img.show(delay=-1) # -1 means do not wait, so we can handle that ourselves
 
-    status = cv2.waitKey(5000)
+        status = cv2.waitKey(delay)
+        if status == 27: # ESC key
+            cv2.destroyAllWindows()
+            break
+        if cv2.getWindowProperty(img.name, cv2.WND_PROP_VISIBLE) < 1: # exit button
+            break
 
-    if status == 27:  # if ESC is pressed, exit loop
-        cv2.destroyAllWindows()
-        exit()
+        t += delta_t
 
-    if cv2.getWindowProperty(img.name, cv2.WND_PROP_VISIBLE) < 1:
-        exit()
-
-    simple_circles(img, time=10.0)
-    img.show(delay=-1)
-
-    status = cv2.waitKey(5000)
-
-    # Bugs: if you exit the window instead of key press, it will close but it will continue to wait until the time expires
+    # Bugs:
+    # if you exit the window instead of key press, it will close but it will continue to wait until the time expires
+    # if you press a key, it will immediately progress to the next full frame, instead of calculating actual time difference
+    # if computation is long, framerate will effectively lower, and time is tied to framerate, so it will be slower than expected
