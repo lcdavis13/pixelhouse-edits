@@ -24,21 +24,25 @@ def simple_circles(time=0.0): # same as small_demos.py but with time argument
     return C
 
 
+def imgshow(img):
+    img.show(delay=-1)  # -1 means do not wait, so we can handle that ourselves
+
+    status = cv2.waitKey(delay)
+
+    if status == 27:  # ESC key
+        cv2.destroyAllWindows()
+        return True
+    if cv2.getWindowProperty(img.name, cv2.WND_PROP_VISIBLE) < 1:  # exit button
+        return True
+
+    return False
+
 if __name__ == "__main__":
-
     t = 0.0
-    unbroken = True
-    while unbroken:
+    escape = False
+    while not escape:
         img = simple_circles(time=t)
-        img.show(delay=-1) # -1 means do not wait, so we can handle that ourselves
-
-        status = cv2.waitKey(delay)
-        if status == 27: # ESC key
-            cv2.destroyAllWindows()
-            break
-        if cv2.getWindowProperty(img.name, cv2.WND_PROP_VISIBLE) < 1: # exit button
-            break
-
+        escape = imgshow(img)
         t += delta_t
 
     # Bugs:
