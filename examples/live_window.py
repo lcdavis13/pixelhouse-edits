@@ -49,3 +49,11 @@ if __name__ == "__main__":
     # if you exit the window instead of key press, it will close but it will continue to wait until the time expires
     # if you press a key, it will immediately progress to the next full frame, instead of calculating actual time difference
     # if computation is long, framerate will effectively lower, and time is tied to framerate, so it will be slower than expected
+
+    # ToDo:
+    # formalize imgshow as a Canvas method or alternate mode of Canvas.show()
+    #   - support usual arguments of Canvas.show()
+    #   - support for detecting keypresses
+    #   - support for reporting actual time passed
+    #   - support for showing same image again after non-exiting keypress until desired time is reached
+    # support for live window that is later used to create a gif
