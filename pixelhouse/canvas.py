@@ -409,10 +409,11 @@ class Canvas:
         if orient:
             cv2.moveWindow(self.name, 40, 40)
 
-        status = cv2.waitKey(delay)
+        if (delay >= 0):
+            status = cv2.waitKey(delay)
 
-        if return_status:
-            return status
+            if return_status:
+                return status
 
         return self
 
